@@ -7,8 +7,15 @@ Node v14.16.1
 
 Comandos:
 * Para instalar os módulos necessários
+
 npm install 
+
+
 * Para rodar a aplicação
+
 npm run start
+
+
 * Para compilar a aplicação
+
 npm run make
