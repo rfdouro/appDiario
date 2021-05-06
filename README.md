@@ -8,7 +8,7 @@ NPM 6.14.12
 e
 
 Node v14.16.1
-
+---------------------------------------------------------
 Comandos:
 * Para instalar os módulos necessários
 
