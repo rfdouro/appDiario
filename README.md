@@ -2,7 +2,11 @@
 Aplicação de monitoração diária de tarefas usando electron e dexiejs (indexeddb)
 
 Usado:
+
 NPM 6.14.12
+
+e
+
 Node v14.16.1
 
 Comandos:
