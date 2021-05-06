@@ -1,0 +1,8 @@
+/* 
+http://forum.framework7.io/t/solved-render-delay-on-nested-accordion-list/5366/3
+*/
+.accordion-item .item-title {
+ z-index: 10;
+ position: relative;
+ -webkit-backface-visibility: hidden;
+}

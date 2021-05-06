@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.web.clientproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/clientside-project/1">
+            <name>appDiario</name>
+        </data>
+        <libraries xmlns="http://www.netbeans.org/ns/cdnjs-libraries/1">
+            <library name="dexie" version="3.0.3">
+                <file localPath="sources/resources/vendor/dexie/dexie.min.js" path="dexie.min.js"/>
+                <file localPath="sources/resources/vendor/dexie/dexie.min.js.map" path="dexie.min.js.map"/>
+            </library>
+            <library name="framework7" version="5.7.14">
+                <file localPath="sources/resources/vendor/framework7/css/framework7.bundle.min.css" path="css/framework7.bundle.min.css"/>
+                <file localPath="sources/resources/vendor/framework7/js/framework7.bundle.min.js" path="js/framework7.bundle.min.js"/>
+            </library>
+            <library name="jquery" version="3.6.0">
+                <file localPath="sources/resources/vendor/jquery/jquery.min.js" path="jquery.min.js"/>
+                <file localPath="sources/resources/vendor/jquery/jquery.min.map" path="jquery.min.map"/>
+            </library>
+            <library name="jquery.mask" version="1.14.16">
+                <file localPath="sources/resources/vendor/jquery.mask/jquery.mask.min.js" path="jquery.mask.min.js"/>
+            </library>
+            <library name="moment.js" version="2.29.1">
+                <file localPath="sources/resources/vendor/moment.js/moment-with-locales.min.js" path="moment-with-locales.min.js"/>
+                <file localPath="sources/resources/vendor/moment.js/moment.min.js" path="moment.min.js"/>
+            </library>
+            <library name="vue" version="2.6.12">
+                <file localPath="sources/resources/vendor/vue/vue.min.js" path="vue.min.js"/>
+            </library>
+        </libraries>
+    </configuration>
+</project>

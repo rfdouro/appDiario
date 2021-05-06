@@ -1,0 +1,177 @@
+/*customizações*/
+html{
+ word-wrap: break-word;
+ white-space: normal;
+}
+*{
+ /*color: #666666 !important;*/
+ /*font-size: 1rem !important;*/
+}
+
+/**
+exemplo em 
+https://stackoverflow.com/questions/42262007/hiding-vue-js-template-before-it-is-rendered
+https://jsfiddle.net/2jbe82hq/
+
+https://medium.com/vuejs-tips/v-cloak-45a05da28dc4
+*/
+/*[v-cloak] {
+ display: none;
+}*/
+[v-cloak] > * { display:none; }
+[v-cloak]::before { 
+ content: " ";
+ display: block;
+ width: 16px;
+ height: 16px;
+ background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
+}
+
+
+/*
+.brand-logo {
+ position: relative;
+ color: #fff;
+ display: inline-block;
+ font-size: 2.1rem;
+ padding: 0 !important;
+ margin: 0 !important;
+ height: inherit;
+ top: 30%;
+ left: 0%;
+}
+@media only screen and (max-width: 992px) {
+ .brand-logo {
+  left: 50%;
+  -webkit-transform: translateX(-100%);
+  transform: translateX(-100%);
+ }
+}*/
+
+
+.color-lightgray {
+ --f7-theme-color: #ebebeb;
+ --f7-theme-color-rgb: 235, 235, 235;
+ --f7-theme-color-shade: #d7d7d7;
+ --f7-theme-color-tint: #ffffff;
+}
+.text-color-lightgray {
+ --f7-theme-color-text-color: #ebebeb;
+}
+.bg-color-lightgray {
+ --f7-theme-color-bg-color: #ebebeb;
+}
+.border-color-lightgray {
+ --f7-theme-color-border-color: #ebebeb;
+}
+.ripple-color-lightgray,
+.ripple-lightgray {
+ --f7-theme-color-ripple-color: rgba(235, 235, 235, 0.3);
+}
+
+/*tema customizado*/
+/*:root {
+ --f7-theme-color: #008080;
+ --f7-theme-color-rgb: #b3e5e5;
+ --f7-theme-color-shade: #eaecef;
+ --f7-theme-color-tint: 0, 128, 128;
+}
+.text-color-theme {
+ --f7-theme-color-text-color: var(--f7-theme-color);
+}
+.bg-color-theme {
+ --f7-theme-color-bg-color: var(--f7-theme-color);
+}
+*/
+
+/* Default Statusbar background */
+/*.navbar {
+ background: var(--f7-theme-color-rgb) !important;
+}*/
+.navbar{
+ /*background-color: #007aff !important; */
+ /*background: var(--f7-color-red) !important;
+ color: #FFF;*/
+}
+.navbar-inner{
+ /*background-color: #007aff !important; */
+ /*background: var(--f7-color-red) !important;*/
+}
+.navbar-inner *{
+ /*color: #FFF*/
+}
+/*
+.panel-left .page-content{
+ background: var(--f7-color-red) !important;
+}
+.panel-left .page-content *{
+ color: #FFF
+}
+*/
+
+.page-content{
+ /*background: var(--f7-theme-color-shade) !important;*/
+ /*background-image: radial-gradient( circle farthest-corner at 8% 16.2%,  rgba(195,230,231,1) 0%, rgba(174,211,242,1) 90% );*/
+}
+
+.panel-left .page-content{
+ /*border-right: var(--f7-color-red) solid 2px;*/
+ /*border-right: var(--f7-color-blue) solid 2px;*/
+}
+
+.visivelpequeno{
+ visibility: visible;
+}
+
+.sidebar-nav-left{
+ height: 56px!important; cursor:pointer;
+ background-color:  var(--f7-color-blue);
+}
+.sidebar-nav-left .navbar-inner{
+ height: 56px!important;
+}
+.sidebar-nav-left .page-content{
+ padding-top: 57px!important;
+}
+
+
+@media only screen and (min-width: 768px){
+ #divConteudo{
+  padding-top: 70px;
+  padding-left: 100px;
+  padding-right: 100px;
+ }
+
+ .panel-left .page-content{
+  border-right: var(--f7-color-blue) solid 5px;
+ }
+
+ .visivelpequeno{
+  visibility: hidden;
+  width: 0;
+ }
+
+ .sidebar-nav-left{
+  height: 65px!important; cursor:pointer;
+ }
+ .sidebar-nav-left .navbar-inner{
+  height: 65px!important;
+ }
+ .sidebar-nav-left .page-content{
+  padding-top: 66px!important;
+ }
+}
+
+.list *{
+ /*background-color: #eaecef !important;*/
+ /*background-color: transparent !important;*/
+ /*background-color: rgba(255, 0, 0, 0.5) !important;*/
+ background-color: transparent !important;
+}
+
+/*#divConteudo{
+ background: var(--f7-theme-color-shade) !important;
+}*/
+
+
+

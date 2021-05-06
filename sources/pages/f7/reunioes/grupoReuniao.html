@@ -1,0 +1,133 @@
+<div id="appGrupoReuniao" v-cloak>
+ <h1>Grupos de Reunião</h1>
+ <fieldset>
+  <div class="row list" style="margin: 0px;">
+   <div class="col-100 medium-35">
+    <div class="item-content item-input">
+     <div class="item-inner">
+      <div class="item-title item-label">Nome:</div>
+      <div class="item-input-wrap">
+       <input v-model='grupo.nome' id="inptNomeGrupo" type="text" placeholder="Nome do grupo" required/>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="col-100 medium-65">
+    <div class="item-content item-input">
+     <div class="item-inner">
+      <div class="item-title item-label">Descrição:</div>
+      <div class="item-input-wrap">
+       <textarea v-model='grupo.descricao' id="inptDescricaoGrupo" placeholder="Descrição do grupo" rows="2"
+                 max-rows="3"></textarea>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </fieldset>
+
+ <div class="row list">
+  <div class="col-0 medium-50">
+
+  </div>
+  <div class="col-100 medium-50">
+   <div class="row">
+    <button class="col button button-fill" @click="salvaDado">
+     Salvar
+    </button>
+    <button class="col button button-fill bg-color-red" @click="excluiDado">
+     Excluir
+    </button>
+<!--    <button class="col button button-fill bg-color-gray" @click="vapp.navega({div:'conteudo', pagina:'pages/f7/reunioes/listaReunioes.html'})">-->
+    <button class="col button button-fill bg-color-gray" @click="resetGrupo">
+     Cancelar
+    </button>
+   </div>
+  </div>
+ </div>
+
+ <table class='data-table' style="padding-top: 5vh !important">
+  <thead>
+   <tr>
+    <th style="width: 30%">Nome</th>
+    <th>Descrição</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr style="cursor: pointer" v-for='g in grupos' v-on:click="selecionaDado(g)">
+    <td style="width: 30%">{{g.nome}}</td>
+    <td>{{g.descricao}}</td>
+   </tr>
+  </tbody>
+ </table>
+</div>
+
+
+<script>
+ var vappGrupoReuniao = new Vue({
+  el: '#appGrupoReuniao',
+  data: {
+   grupo: {
+    nome: '',
+    descricao: ''
+   },
+   grupos: []
+  },
+  mounted: function () {
+   var _this = this;
+   _this.getDados();
+  },
+  methods: {
+   getDados: function () {
+    var _this = this;
+
+    db.GrupoReuniao.orderBy('nome')
+            .toArray().then(function (results) {
+     _this.grupos = results;
+     console.log(_this.grupos);
+    });
+   },
+   resetGrupo: function () {
+    this.grupo = {
+     nome: '',
+     descricao: ''
+    };
+   },
+   salvaDado: function () {
+    var _this = this;
+    if (_this.grupo.id == null) {
+     db.GrupoReuniao.add(_this.grupo).then(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     }).catch(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     });
+    } else {
+     db.GrupoReuniao.update(_this.grupo.id, _this.grupo).then(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     }).catch(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     });
+    }
+   },
+   selecionaDado: function (g) {
+    var _this = this;
+    _this.grupo = g;
+   },
+   excluiDado: function () {
+    var _this = this;
+    var g = _this.grupo;
+    if (g.id != null)
+     vapp.appF7.methods.dialogConfirma('Confirma a exclusão?', function () {
+      db.GrupoReuniao.delete(g.id).then(function (g) {
+       _this.getDados();
+       _this.resetGrupo();
+      });
+     });
+   }
+  }
+ });
+</script>

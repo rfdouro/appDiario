@@ -1,0 +1,158 @@
+<div id="appCadReuniao" v-cloak>
+ <h1>Cadastro de Reunião</h1>
+ <fieldset>
+  <div class="row list" style="margin: 0px;">
+   <div class="col-100 medium-70">
+    <div class="item-content item-input">
+     <div class="item-inner">
+      <div class="item-title item-label">Grupo de Reunião:</div>
+      <div class="item-input-wrap">
+       <select id='inptGrupo' v-model="reuniao.grupo" required>
+        <option v-for='g in grupos' :value='g'>{{g.nome}}</option>
+       </select>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="col-100 medium-30">
+    <div class="item-content item-input">
+     <div class="item-inner">
+      <div class="item-title item-label">Data:</div>
+      <div class="item-input-wrap">
+       <input type="date" v-model="reuniao.data" 
+              data-error-message="Digite a data" required/>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="row list" style="margin: 0px;">
+   <div class="col-100">
+    <div class="item-content item-input">
+     <div class="item-inner">
+      <div class="item-title item-label">Ata da reunião:</div>
+      <div class="item-input-wrap">
+       <textarea v-model='reuniao.ata' id="inptAta" placeholder="Ata da reunião" rows="5" max-rows="10" required></textarea>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </fieldset>
+ <div class="row list">
+  <div class="col-0 medium-50">
+
+  </div>
+  <div class="col-100 medium-50">
+   <div class="row">
+    <button class="col button button-fill" @click="salvaDados">
+     Salvar
+    </button>
+    <button class="col button button-fill bg-color-red" @click="excluiDado">
+     Excluir
+    </button>
+    <button class="col button button-fill bg-color-gray" @click="vapp.navega({div:'conteudo', pagina:'pages/f7/reunioes/listaReunioes.html'})">
+     Cancelar
+    </button>
+   </div>
+  </div>
+ </div>
+
+</div>
+
+
+<script>
+ var vappCadReuniao = new Vue({
+  el: '#appCadReuniao',
+  data: {
+   reuniao: {
+    id: -1,
+    data: null,
+    ata: '',
+    grupo: null
+   },
+   grupos: [],
+   reunioes: [],
+   locale: 'pt-BR',
+   labels: {
+    'pt-BR': {
+     labelPrevDecade: "Década anterior",
+     labelPrevYear: "Ano anterior",
+     labelPrevMonth: "Mês anterior",
+     labelCurrentMonth: "Mês corrente",
+     labelNextMonth: "Próximo mês",
+     labelNextYear: "Próximo ano",
+     labelNextDecade: "Próxima década",
+     labelToday: "Hoje",
+     labelSelected: "Data selecionada",
+     labelNoDateSelected: "Sem data selecionada",
+     labelCalendar: "Calendário",
+     labelNav: "Navegação",
+     labelHelp: "Use o teclado para navegar entre datas"
+    }
+   }
+  },
+  mounted: function () {
+   var _this = this;
+   this.reuniao.id = vapp.urlParam('id');
+   _this.getDados();
+  },
+  methods: {
+   acertaData: function (dtAnoMesDia) {
+    var dtspl = dtAnoMesDia.split('-');
+    var ano = dtspl[0];
+    var mes = dtspl[1];
+    var dia = dtspl[2];
+    return new Date(mes + "-" + dia + "-" + ano);
+   },
+   getDados: function () {
+    var _this = this;
+    //console.log(_this.reuniao.id);
+    db.Reuniao.where('id').equals(_this.reuniao.id).toArray().then(function (r) {
+     //console.log(r);
+     _this.reuniao = r[0];
+     //moment(dtR).format('DD/MM/YYYY')
+     console.log(new Date(moment(_this.reuniao.data).format('MM/DD/YYYY')));
+     _this.reuniao.data = moment(_this.reuniao.data).format('YYYY-MM-DD');
+     console.log(_this.reuniao);
+     db.GrupoReuniao.orderBy('nome').toArray().then(function (results) {
+      _this.grupos = results;
+     });
+    });
+   },
+   resetReuniao: function () {
+    this.reuniao = {
+     data: null,
+     ata: '',
+     grupo: null
+    };
+   },
+   salvaDados: function () {
+    var _this = this;
+
+    if (typeof (_this.reuniao.data) == 'string')
+     _this.reuniao.data = _this.acertaData(_this.reuniao.data);
+
+    db.Reuniao.update(_this.reuniao.id, _this.reuniao).then(function () {
+     vapp.appF7.methods.dialogInforma('Alteração efetuada', function () {
+      vapp.navega({div: 'conteudo', pagina: 'pages/f7/reunioes/listaReunioes.html'});
+     });
+    }).catch(function () {
+
+    });
+   },
+   excluiDado: function () {
+    var _this = this;
+
+    vapp.appF7.methods.dialogConfirma('Confirma a exclusão?', function () {
+     db.Reuniao.delete(_this.reuniao.id).then(function (r) {
+      vapp.appF7.methods.dialogInforma('Exclusão efetuada', function () {
+       vapp.navega({div: 'conteudo', pagina: 'pages/f7/reunioes/listaReunioes.html'});
+      });
+     });
+    });
+    return;
+   }
+  }
+ });
+</script>

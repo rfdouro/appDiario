@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<!--
+https://forum.framework7.io/t/framework7-admin-dashboard-template/7091
+-->
+<html>
+ <head>
+  <title>Diário Monitora</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- Insert this line above script imports  -->
+  <script>
+   if (typeof module === 'object') {
+    window.module = module;
+    module = undefined;
+   }
+  </script>
+
+  <link href="resources/vendor/framework7/css/framework7.bundle.min.css" rel="stylesheet" type="text/css"/>
+  <link href="resources/css/icons.css" rel="stylesheet" type="text/css"/>
+  <link href="resources/css/custom.css" rel="stylesheet" type="text/css"/>
+  <link href="resources/css/appF7.css" rel="stylesheet" type="text/css"/>
+  <link href="resources/css/flags/flags.css" rel="stylesheet" type="text/css"/>
+  <script src="resources/vendor/jquery/jquery.min.js" type="text/javascript"></script>
+  <script src="resources/vendor/vue/vue.min.js" type="text/javascript"></script>
+  <script src="resources/vendor/framework7/js/framework7.bundle.min.js" type="text/javascript"></script>
+  <script src="resources/vendor/jquery.mask/jquery.mask.min.js" type="text/javascript"></script>
+
+  <!--  <script src="resources/vendor/moment.js/locale/pt-br.min.js" type="text/javascript"></script>-->
+  <script src="resources/vendor/moment.js/moment.min.js" type="text/javascript"></script>
+  <script src="resources/vendor/moment.js/moment-with-locales.min.js" type="text/javascript"></script>
+
+  <script src="resources/js/vue/VueFiltros.js" type="text/javascript"></script>
+  <script src="resources/js/vue/VueDiretivas.js" type="text/javascript"></script>
+  <script src="resources/js/vue/VueComponentes.js" type="text/javascript"></script>
+  <script src="resources/js/vue/components/f7-datepicker.js" type="text/javascript"></script>
+  <script src="resources/js/vue/components/f7-datepicker-inline.js" type="text/javascript"></script>
+
+  <script src="resources/js/appF7.js" type="text/javascript"></script>
+
+  <script src="resources/vendor/dexie/dexie.min.js" type="text/javascript"></script>
+  <script src="resources/vendor/dexie/addons/dexie-observable.min.js" type="text/javascript"></script>
+  <script src="resources/js/db.js" type="text/javascript"></script>
+  <!-- Insert this line after script imports -->
+  <script>
+   if (window.module)
+    module = window.module;
+  </script>
+  
+  <!-- Script para importar e exportar dados - usando node -->
+  <script src="../renderer.js"></script>
+
+  <style>
+
+  </style>
+
+ </head>
+ <body>  
+  <div id="appF7" v-cloak>  
+   <div :class='temaBG'>
+    <!-- Top Navbar -->
+    <div class="navbar">
+     <div class="navbar-bg"></div>
+     <div class="navbar-inner">
+      <a href="#" class="link icon-only panel-open" id="btnNavLeft" data-panel="left">
+       <i class="icon material-icons">menu</i>
+      </a>
+      <div class="title">{{titulo}}</div>
+      <div class="right">
+
+       <a class="button icon-only smart-select smart-select-init" 
+          data-close-on-select="true" data-open-in="popover">
+        <select v-model="tema">
+         <option value="0">light</option>
+         <option value="1">dark</option>
+        </select>
+        <div class="item-content" title='Alterar tema'>
+         <div class="item-inner">
+          <i class="icon material-icons">sync_alt</i>
+          <div class="item-title"></div>
+         </div>
+        </div>
+       </a>
+
+       <a href="#" class="button" title='Exportar dados' @click="exportar">
+        <i class="icon material-icons">file_download</i>
+       </a>
+       <a href="#" class="button" title='Importar dados' @click="importar">
+        <i class="icon material-icons">file_upload</i>
+       </a>
+       <!--      <a class="button icon-only popover-open" href="#" data-popover=".popover-links">
+              <div class="item-content" >
+               <div class="item-inner">
+                <i class="icon material-icons">navigation</i>
+                div class="item-title"></div
+               </div>
+              </div>
+             </a>
+             <div class="popover popover-links">
+              <div class="popover-inner bg-color-theme">
+               <div class="list">
+                <ul>
+                 <li class="bg-color-red"><a class="list-button item-link" href="#">Link 1</a></li>
+                 <li><a class="list-button item-link" href="#">Link 2</a></li>
+                 <li><a class="list-button item-link" href="#">Link 3</a></li>
+                 <li><a class="list-button item-link" href="#">Link 4</a></li>
+                </ul>
+               </div>
+              </div>
+             </div>
+             <span v-bind:class="flagLang"></span>
+       <a class="button icon-only smart-select smart-select-init" 
+          data-close-on-select="true" data-open-in="popover">
+        <select v-model="lang">
+         <option value="pt-BR" selected >pt-BR</option>
+         <option value="en">en</option>
+        </select>
+        <div class="item-content" >
+         <div class="item-inner">
+          <i class="icon material-icons">language</i>
+          <div class="item-title"></div>
+         </div>
+        </div>
+       </a>
+             <a href="#" class="link icon-only panel-open" data-panel="right">
+              <i class="icon material-icons">info</i>
+             </a>-->
+      </div>
+     </div>
+    </div>
+
+    <!-- Left panel, let it be with reveal effect -->
+    <div class="panel panel-left panel-cover panel-init"
+         data-collapsed-breakpoint="768"
+         data-visible-breakpoint="768"
+         data-swipe="false">
+     <div class="list accordion-list">
+      <ul>
+       <li>
+        <a href="#" class="panel-close item-content" @click="navega({pagina: 'pages/f7/tarefas/tarefas.html', div: 'conteudo'})">
+         <div class="item-media"><i class="icon material-icons">home</i></div>
+         <div class="item-inner">
+          <div class="item-title">Início</div>
+          <!--         <div class="item-after"><span class="badge color-orange">home</span></div>-->
+         </div>
+        </a>
+       </li>
+       <li class="accordion-item">
+        <a href="#" class="item-content item-link">
+         <div class="item-media"><i class="icon material-icons">menu</i></div>
+         <div class="item-inner">
+          <div class="item-title">Tarefas</div>
+         </div>
+        </a>
+        <div class="accordion-item-content">
+         <!--        <div class="block">
+                  <div class="list">-->
+         <ul>
+          <li>
+           <a href="#" class="panel-close item-content" @click="navega({pagina: 'pages/f7/tarefas/tarefas.html', div: 'conteudo'})">
+            <div class="item-media"><i class="icon material-icons">check_box_outline_blank</i></div>
+            <div class="item-inner">
+             <div class="item-title">A fazer</div>
+            </div>
+           </a>
+          </li>
+          <li>
+           <a href="#" class="panel-close item-content" @click="navega({pagina: 'pages/f7/tarefas/tarefas_finalizadas.html', div: 'conteudo'})">
+            <div class="item-media"><i class="icon material-icons">check_box</i></div>
+            <div class="item-inner">
+             <div class="item-title">Finalizadas</div>
+            </div>
+           </a>
+          </li>
+         </ul>            
+         <!--         </div>
+                 </div>-->
+        </div>
+       </li>
+       <li class="accordion-item">
+        <a href="#" class="item-content item-link">
+         <div class="item-media"><i class="icon material-icons">menu</i></div>
+         <div class="item-inner">
+          <div class="item-title">Reuniões</div>
+         </div>
+        </a>
+        <div class="accordion-item-content">
+         <!--        <div class="block">
+                  <div class="list">-->
+         <ul>
+          <li>
+           <a href="#" class="panel-close item-content" @click="navega({pagina: 'pages/f7/reunioes/grupoReuniao.html', div: 'conteudo'})">
+            <div class="item-media"><i class="icon material-icons">groups</i></div>
+            <div class="item-inner">
+             <div class="item-title">Grupos</div>
+            </div>
+           </a>
+          </li>
+          <li>
+           <a href="#" class="panel-close item-content" @click="navega({pagina: 'pages/f7/reunioes/cadReuniao.html', div: 'conteudo'})">
+            <div class="item-media"><i class="icon material-icons">voice_chat</i></div>
+            <div class="item-inner">
+             <div class="item-title">Reunião</div>
+            </div>
+           </a>
+          </li>
+          <li>
+           <a href="#" class="panel-close item-content" @click="navega({pagina: 'pages/f7/reunioes/listaReunioes.html', div: 'conteudo'})">
+            <div class="item-media"><i class="icon material-icons">list</i></div>
+            <div class="item-inner">
+             <div class="item-title">Lista</div>
+            </div>
+           </a>
+          </li>
+         </ul>            
+         <!--         </div>
+                 </div>-->
+        </div>
+       </li>
+
+      </ul>
+     </div>
+    </div>
+
+    <!-- Right panel, with cover effect -->
+    <div class="panel panel-right panel-cover">
+     <div class="toolbar tabbar toolbar-bottom">
+      <div class="toolbar-inner">
+       <a href="#tab-sobre" class="tab-link tab-link-active">Sobre</a>
+       <a href="#tab-ajuda" class="tab-link">Ajuda</a>
+      </div>
+     </div>
+     <div class="tabs">
+      <div id="tab-sobre" class="page-content tab tab-active">
+       <div class="block">
+        <p>Sobre o programa</p>
+        ...
+       </div>
+      </div>
+      <div id="tab-ajuda" class="page-content tab">
+       <div class="block">
+        <p>Ajuda</p>
+        <div class="list accordion-list">
+         <ul>
+          <li>
+           <a href="${cp}/swagger-ui.html" class="panel-close item-content external" target="blank">
+            <div class="item-media"><i class="icon material-icons">home</i></div>
+            <div class="item-inner">
+             <div class="item-title">Documentação</div>
+             <!--         <div class="item-after"><span class="badge color-orange">home</span></div>-->
+            </div>
+           </a>
+          </li>
+          <li>
+           <a href="${cp}/api-docs" class="panel-close item-content external" target="blank">
+            <div class="item-media"><i class="icon material-icons">home</i></div>
+            <div class="item-inner">
+             <div class="item-title">OpenAPI</div>
+             <!--         <div class="item-after"><span class="badge color-orange">home</span></div>-->
+            </div>
+           </a>
+          </li>
+         </ul>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div> 
+
+
+    <div data-name="home" class="page">
+     <!-- Scrollable page content -->
+     <div class="page-content" id="conteudo">
+
+     </div>
+    </div>
+   </div>
+  </div>
+ 
+  <script>
+//********************************
+// diretiva para navegação
+// usando como exemplo:
+// <a href="#!" v-linkto="{div:'appMain', pagina:'paginas/pagina2.html'}">teste</a>
+// fonte : https://vuejs.org/v2/guide/custom-directive.html
+// usa o método navega da instancia main
+//********************************
+   Vue.directive('linkto', {
+    bind: function (el, binding, vnode) {
+     var s = JSON.stringify;
+     var o = JSON.parse(s(binding.value));
+     $(el).click(function () {
+      vapp.navega({div: o.div, pagina: o.pagina});
+     });
+    }
+   });
+//*******************************************
+
+   var vapp = new Vue({
+    el: '#appF7',
+    data: {
+     appF7: null,
+     titulo: 'Diário Monitora',
+     lang: 'pt-BR',
+     siglasCondicoes: {ec: "Encoberto com Chuvas Isoladas", ci: "Chuvas Isoladas", c: "Chuva", in: "Instável", pp: "Poss. de Pancadas de Chuva", cm: "Chuva pela Manhã", cn: "Chuva a Noite", pt: "Pancadas de Chuva a Tarde", pm: "Pancadas de Chuva pela Manhã", np: "Nublado e Pancadas de Chuva", pc: "Pancadas de Chuva", pn: "Parcialmente Nublado", cv: "Chuvisco", ch: "Chuvoso", t: "Tempestade", ps: "Predomínio de Sol", e: "Encoberto", n: "Nublado", cl: "Céu Claro", nv: "Nevoeiro", g: "Geada", ne: "Neve", nd: "Não Definido", pnt: "Pancadas de Chuva a Noite", psc: "Possibilidade de Chuva", pcm: "Possibilidade de Chuva pela Manhã", pct: "Possibilidade de Chuva a Tarde", pcn: "Possibilidade de Chuva a Noite", npt: "Nublado com Pancadas a Tarde", npn: "Nublado com Pancadas a Noite", ncn: "Nublado com Poss. de Chuva a Noite", nct: "Nublado com Poss. de Chuva a Tarde", ncm: "Nubl. c/ Poss. de Chuva pela Manhã", npm: "Nublado com Pancadas pela Manhã", npp: "Nublado com Possibilidade de Chuva", vn: "Variação de Nebulosidade", ct: "Chuva a Tarde", ppn: "Poss. de Panc. de Chuva a Noite", ppt: "Poss. de Panc. de Chuva a Tarde", ppm: "Poss. de Panc. de Chuva pela Manhã"},
+     strings: {
+      "bemVindo": "Seja bem vindo(a)",
+      "paginainicial": "Página inicial",
+      "rightlink": "link a direita",
+      "leftpanel": "Diário Monitora",
+      "lefpanelcontent": "Menu de opções",
+      "close": "fechar",
+      "rightpanel": "Informações",
+      "rightpanelcontent": "Informações baseadas no CPTEC/INPE",
+      "information": "Informação",
+      "informationcontent": "Aplicação de exemplo",
+      "inicio": "Início",
+      "escolhaUmaCidade": "Escolha uma cidade",
+      "desenvolvedor": "Desenvolvedor",
+      "consultar": "Consultar",
+      "nomeDaCidade": "Nome da cidade",
+      "escolhaUmaOpcao": "Escolha uma opção de consulta",
+      "previsao4dias": "Previsão para 4 dias"
+     },
+     pagina: 'pages/f7/tarefas/tarefas.html',
+     paginaR: 0,
+     porPaginaR: 10,
+     tema: 0 //0 = light, 1 = dark
+    },
+    created: function () {
+     this.tema = (localStorage.getItem('temaDiarioMonitora') == null) ? 0 : localStorage.getItem('temaDiarioMonitora');
+     console.log('this.tema');
+     console.log(this.tema);
+    },
+    mounted: function () {
+     //ajax options for Jquery
+     $.ajaxSetup({
+      async: true
+     });
+
+     var idP = Math.floor(Math.random() * 50);
+
+//  $.ajax({
+//   url: 'http://localhost:3000/pessoa',
+//   type: 'POST',
+//   data: {
+//    id: -1,
+//    nome: 'pessoa ' + idP,
+//    idade: idP
+//   }
+//  })
+//          .done(function (data) {
+//           alert(data.mensagem);
+//          })
+//          .fail(function () {
+//           alert("error");
+//          })
+//          .always(function () {
+//           $.get("http://localhost:3000/pessoa", null, function (r) {
+//            console.log(r);
+//           });
+//          })
+//          ;
+
+
+
+     var _this = this;
+     try {
+      //create a F7 instance
+      this.appF7 = criaAppF7();
+
+      //var tc = this.appF7.utils.colorThemeCSSProperties(63, 81, 181);
+      var tc = this.appF7.utils.colorThemeCSSProperties(127, 14, 183);
+      console.log(tc);
+
+      //this.appF7.views.create('.view-main');
+      //para navegar até uma determinada página
+      if (window.Intl && typeof window.Intl === 'object') {
+       console.log('language = ' + navigator.language);
+      }
+
+      //////////////////////////////
+      //navegação usando o browser
+      //////////////////////////////
+      window.onpopstate = function (oEvent) {
+       _this.appF7.methods.navega(oEvent.state, false);
+      };
+
+      this.navega({pagina: this.pagina, div: 'conteudo'});
+     } catch (e) {
+      alert(e);
+     }
+    },
+    beforeUpdate: function () {
+
+    },
+    updated: function () {
+     //this.mudaLangXHR(this.lang);
+     this.$nextTick(function () {
+      vapp.appF7.preloader.hide();
+     });
+    },
+    methods: {
+     setTitulo: function (t) {
+      this.titulo = t;
+     },
+     mostraInfo: function () {
+      this.appF7.dialog.alert(this.strings.informationcontent, this.strings.information, function () {});
+     },
+     //carrega os arquivos ao setar a linguagem
+     mudaLangXHR: function (l) {
+      vapp.appF7.preloader.show();
+      var _this = this;
+      i18next.use(i18nextXHRBackend).init({
+       //debug: true,
+       fallbackLng: [l],
+       preload: [l],
+       ns: 'translation',
+       defaultNS: 'translation',
+       backend: {
+        loadPath: 'resources/locales/{{lng}}/{{ns}}.json'
+       }
+      }, function (err, t) {
+       for (var k in _this.strings) {
+        _this.strings[k] = i18next.t(k);
+       }
+      });
+     },
+     urlParam: function (parametro) {
+      return this.appF7.methods.urlParam(parametro);
+     },
+     navega: function (obj) {
+      this.appF7.methods.navega(obj);
+     },
+     exportar: function () {
+      /*exportarDados().then(function (r) {
+       console.log(r);
+       var exportName = 'dados';
+       var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(r));
+       var downloadAnchorNode = document.createElement('a');
+       downloadAnchorNode.setAttribute("href", dataStr);
+       downloadAnchorNode.setAttribute("class", "external"); // required for Framework7
+       downloadAnchorNode.setAttribute("download", exportName + ".json");
+       document.body.appendChild(downloadAnchorNode); // required for firefox
+       downloadAnchorNode.click();
+       downloadAnchorNode.remove();
+       console.log(downloadAnchorNode);
+      });*/
+      exportar();
+     },
+     importar: function () {
+      //proveniente de renderer.js
+      importar();
+     }
+    },
+    computed: {
+     flagLang: function () {
+      switch (this.lang) {
+       case 'pt-BR':
+        return 'flag flag-br';
+       case 'en':
+        return 'flag flag-us';
+      }
+     },
+     temaBG: function () {
+      var t = 'theme-light';
+      if (this.tema == 1) {
+       t = 'theme-dark';
+      }
+      console.log('temaBG');
+      console.log(t);
+      localStorage.setItem('temaDiarioMonitora', this.tema);
+      return t;
+     }
+    },
+    watch: {
+     tema: function (newPP, oldPP) {
+      console.log('new = ' + newPP);
+      return false;
+     }
+    }
+   });
+
+  </script>
+ </body>
+</html>
