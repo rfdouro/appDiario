@@ -11,7 +11,9 @@
                 <file localPath="sources/resources/vendor/dexie/dexie.min.js.map" path="dexie.min.js.map"/>
             </library>
             <library name="framework7" version="5.7.14">
+                <file localPath="sources/resources/vendor/framework7/css/framework7.bundle.css" path="css/framework7.bundle.css"/>
                 <file localPath="sources/resources/vendor/framework7/css/framework7.bundle.min.css" path="css/framework7.bundle.min.css"/>
+                <file localPath="sources/resources/vendor/framework7/js/framework7.bundle.js" path="js/framework7.bundle.js"/>
                 <file localPath="sources/resources/vendor/framework7/js/framework7.bundle.min.js" path="js/framework7.bundle.min.js"/>
             </library>
             <library name="jquery" version="3.6.0">

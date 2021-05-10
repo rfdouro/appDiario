@@ -55,9 +55,10 @@ function F7DatepickerInline() {
      //openIn: 'customModal',
      dateFormat: this.computedFormat,
      value: [_this.$vnode.data.model.value],
-     weekHeader: false,
+     weekHeader: true,
      header: true,
      footer: false,
+     firstDay: 0,
      //rangesClasses: this.computedRangesClasses,
      renderHeader: function () {
       return `

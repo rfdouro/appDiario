@@ -9,6 +9,15 @@
 :root {
  --f7-input-outline-border-radius:0;
 /* --f7-radio-border-radius: 25%;*/
+--f7-menu-bg-color: var(--f7-theme-color) !important;
+--f7-menu-item-dropdown-icon-color: var(--f7-color-white) !important
+}
+.menu-item.active-state:not(.menu-item-dropdown-opened) {
+  background-color: var(--f7-theme-color) !important;
+}
+.menu-dropdown-link:hover{
+/* background: rgba(var(--f7-theme-color-rgb), 0.8);*/
+ background: var(--f7-theme-color-shade);
 }
 *:not([class^="preloader-inner"]):not(.icon-radio):not(input[type="radio"]){
  border-radius: 0!important;
@@ -140,6 +149,11 @@ html{
  /* background: #0000FF;*/
  margin-top: 0px;
  margin-bottom: 40px;
+}
+.calendar-week-day{
+ padding-top: 15px;
+ height: 30px;
+ background-color: var(--f7-theme-color) !important;
 }
 .calendar .toolbar-top{
  /* background: #00FF00;*/
