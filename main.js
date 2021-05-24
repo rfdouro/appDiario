@@ -82,10 +82,21 @@ function createWindow() {
    accelerator: 'CmdOrCtrl+F'
    },*/
   {
-   label: 'Exportar dados',
-   click() {
-    mainWindow.webContents.executeJavaScript('vapp.exportar();');
-   }
+   label: 'Dados',
+   submenu: [
+    {
+     label: 'Exportar dados',
+     click() {
+      mainWindow.webContents.executeJavaScript('exportar();');
+     }
+    },
+    {
+     label: 'Importar dados',
+     click() {
+      mainWindow.webContents.executeJavaScript('importar();');
+     }
+    }
+   ]
   },
   {
    label: 'Site do desenvolvedor',
