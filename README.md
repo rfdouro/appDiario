@@ -25,3 +25,5 @@ npm run start
 * Para compilar a aplicação
 
 npm run make
+
+-> verifique o diretório "out"
