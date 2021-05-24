@@ -1,0 +1,142 @@
+<div id="appGrupoReuniao" v-cloak>
+ <h2>Grupos de Reunião</h2>
+ <fieldset>
+  <div class="row" style="margin: 0px;">
+   <div class="col-12 col-md-4">
+
+    <q-input v-model='grupo.nome' label="Nome do grupo"
+             for="inptNomeGrupo"
+             ref="inptNomeGrupo"></q-input>
+
+   </div>
+   <div class="col-12 col-md-8">
+
+    <q-input
+     for="inptDescricaoGrupo"
+     ref="inptDescricaoGrupo"
+     label="Descrição do grupo"
+     v-model='grupo.descricao'
+     filled
+     type="textarea"
+     ></q-input>
+
+   </div>
+  </div>
+ </fieldset>
+
+ <div class="row">
+  <div class="col-0 col-md-6">
+
+  </div>
+  <div class="col-12 col-md-6">
+   <div class="row">
+    <q-btn color="primary" class="col-4" label="Salvar" @click="salvaDado"></q-btn>
+    <q-btn color="negative" class="col-4" label="Excluir" @click="excluiDado"></q-btn>
+    <q-btn class="col-4" label="Cancelar" @click="resetGrupo"></q-btn>
+   </div>
+  </div>
+ </div>
+
+ <table class="q-table q-table--horizontal-separator" style="padding-top: 5vh !important">
+  <thead>
+   <tr>
+    <th style="width: 30%">Nome</th>
+    <th>Descrição</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr style="cursor: pointer" v-for='g in grupos' v-on:click="selecionaDado(g)">
+    <td style="width: 30%">{{g.nome}}</td>
+    <td>{{g.descricao}}</td>
+   </tr>
+  </tbody>
+ </table>
+</div>
+
+
+<script>
+ var vappGrupoReuniao = new Vue({
+  el: '#appGrupoReuniao',
+  data: {
+   grupo: {
+    nome: '',
+    descricao: ''
+   },
+   grupos: []
+  },
+  mounted: function () {
+   var _this = this;
+   _this.getDados();
+  },
+  methods: {
+   getDados: function () {
+    var _this = this;
+
+    db.GrupoReuniao.orderBy('nome')
+            .toArray().then(function (results) {
+     _this.grupos = results;
+     console.log(_this.grupos);
+    });
+   },
+   resetGrupo: function () {
+    this.grupo = {
+     nome: '',
+     descricao: ''
+    };
+   },
+   salvaDado: function () {
+    var _this = this;
+
+    if (_this.grupo.nome == null || _this.grupo.nome == "" || _this.grupo.nome == undefined) {
+     this.$q.notify({
+      message: 'É necessário digitar o nome do grupo!',
+      color: 'amber',
+      position: 'top-right'
+     });
+     return;
+    }
+
+    if (_this.grupo.id == null) {
+     db.GrupoReuniao.add(_this.grupo).then(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     }).catch(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     });
+    } else {
+     db.GrupoReuniao.update(_this.grupo.id, _this.grupo).then(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     }).catch(function () {
+      _this.getDados();
+      _this.resetGrupo();
+     });
+    }
+   },
+   selecionaDado: function (g) {
+    var _this = this;
+    _this.grupo = g;
+    console.log(_this.grupo);
+    _this.$refs.inptNomeGrupo.select();
+   },
+   excluiDado: function () {
+    var _this = this;
+    var g = _this.grupo;
+    if (g.id != null) {
+     _this.$q.dialog({
+      title: 'Confirmação',
+      message: 'Confirma a exclusão?',
+      cancel: true,
+      persistent: true
+     }).onOk(() => {
+      db.GrupoReuniao.delete(g.id).then(function (g) {
+       _this.getDados();
+       _this.resetGrupo();
+      });
+     });
+    }
+   }
+  }
+ });
+</script>

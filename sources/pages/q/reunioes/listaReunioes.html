@@ -1,0 +1,172 @@
+<div id="appListaReunioes" v-cloak>
+
+ <fieldset>
+  <legend>
+   Pesquisa
+  </legend>
+  <div class="row" style='margin: 0px;'>
+   <div class="col-12 col-md-4">
+    <div class='row'>
+     <div class="col-2">
+      <q-btn color="primary" text-color="white" label="<" @click="decPagina" ></q-btn> 
+     </div>
+     <div class="col-5" style="height: 25px; padding-top: 12px; padding-bottom: 0px;">
+      &nbsp;Página {{pagina+1}} de {{totalPaginas}}&nbsp;
+     </div>
+     <div class="col-3" style="height: 25px; padding-top: 10px; padding-bottom: 0px;">
+      <select v-on:change='selqtdpp' v-model='porPagina' class='bg-primary text-white'
+              style="height: 37px; margin-top: -5px; font-size: 14px; padding-top: 0px; padding-bottom: 0px; width:100%; border: none">
+       <option value='1'>1</option>
+       <option value='2'>2</option>
+       <option value='5'>5</option>
+       <option value='10'>10</option>
+       <option value='20'>20</option>
+      </select>
+     </div>
+     <div class="col-2">
+      <q-btn color="primary" text-color="white" label=">" @click="incPagina" ></q-btn> 
+     </div>
+    </div>
+   </div>
+   <div class="col-12 col-md-5">
+    <q-input v-model="filtroPesquisa" label="Pesquisa" 
+             filled  color="primary"
+             v-on:keypress.13="getDados" clearable clear-icon="close" ></q-input>
+   </div>
+   <div class="col-12 col-md-3">
+    <q-btn color="primary" label="Pesquisar" style='width: 100%' v-on:click="getDados" ></q-btn>
+   </div>
+  </div>
+ </fieldset>
+
+ <table class="q-table q-table--horizontal-separator" style="width: 100%;">
+  <thead>
+   <tr>
+    <th colspan="3">
+
+    </th>
+   </tr>
+   <tr>
+    <!--     <th style="width: 5%">Id</th>-->
+    <th style="width: 15%">Data</th>
+    <th style="width: 15%">Grupo</th>
+    <th>Ata</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr v-for="r in reunioes" style="cursor: pointer" @click="abreEdita(r.id)">
+    <!--     <td style="width: 5%">{{r.id}}</td>-->
+    <td style="width: 15%">{{dataFmt(r.data)}}</td>
+    <td style="width: 15%">{{r.grupo.nome}}</td>
+    <td>{{r.ata}}</td>
+   </tr>
+  </tbody>
+ </table>
+</div>
+
+
+<script>
+ var vappListaReunioes = new Vue({
+  el: '#appListaReunioes',
+  data: {
+   reuniao: {
+    data: null,
+    ata: ''
+   },
+   reunioes: [],
+   pagina: 0,
+   porPagina: 2,
+   total: -1,
+   totalPaginas: 0,
+   filtroPesquisa: ''
+  },
+  mounted: function () {
+   var _this = this;
+   /*this.reuniao = {
+    data: new Date(),
+    ata:'No entanto, não podemos esquecer que a consolidação das estruturas facilita a criação dos relacionamentos verticais entre as hierarquias.' 
+    +'No entanto, não podemos esquecer que a consolidação das estruturas facilita a criação dos relacionamentos verticais entre as hierarquias.'
+    +'No entanto, não podemos esquecer que a consolidação das estruturas facilita a criação dos relacionamentos verticais entre as hierarquias.'
+    };
+    for(var i=0; i<10; i++){
+    db.Reuniao.add(this.reuniao).then(function () { }).catch(function () { });
+    }  */
+   //console.log(vapp.paginaR);
+   this.pagina = vapp.paginaR;
+   this.porPagina = vapp.porPaginaR;
+   this.getDados();
+  },
+  methods: {
+   dataFmt: function (dt) {
+    /*var data = dt,
+     dia = data.getDate().toString(),
+     diaF = (dia.length == 1) ? '0' + dia : dia,
+     mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
+     mesF = (mes.length == 1) ? '0' + mes : mes,
+     anoF = data.getFullYear();
+     return diaF + "/" + mesF + "/" + anoF;*/
+    return moment(dt).format("DD/MM/YYYY");
+   },
+   selqtdpp: function () {
+    this.pagina = 0;
+    vapp.paginaR = this.pagina;
+    this.getDados();
+   },
+   decPagina: function () {
+    if (this.pagina > 0) {
+     this.pagina--;
+     vapp.paginaR = this.pagina;
+     this.getDados();
+    }
+   },
+   incPagina: function () {
+    if (this.pagina < this.totalPaginas - 1) {
+     this.pagina++;
+     vapp.paginaR = this.pagina;
+     this.getDados();
+    }
+   },
+   abreEdita: function (id) {
+    vapp.navega({div: 'conteudo', pagina: 'pages/q/reunioes/editaReuniao.html?id=' + id});
+   },
+   getDados: function () {
+    var _this = this;
+    vapp.showSplash();
+
+    _this.filtroPesquisa = (_this.filtroPesquisa == null) ? "" : _this.filtroPesquisa;
+
+    db.Reuniao.filter(function (reuniao) {
+     return reuniao.ata.includes(_this.filtroPesquisa);//palavra ou termo a ser pesquisada(o)
+    }).count(function (t) {
+     _this.total = t;
+     console.log(_this.total);
+     console.log(_this.porPagina);
+     _this.totalPaginas = Math.ceil(_this.total / _this.porPagina);
+     console.log(_this.totalPaginas);
+     _this.totalPaginas = (_this.totalPaginas == 0) ? 1 : _this.totalPaginas;
+     console.log(_this.totalPaginas);
+     db.Reuniao.orderBy('data').reverse().filter(function (reuniao) {
+      return reuniao.ata.includes(_this.filtroPesquisa);//palavra ou termo a ser pesquisada(o)
+     })
+             .offset(_this.pagina * _this.porPagina)
+             .limit(_this.porPagina)
+             .toArray().then(function (results) {
+
+      _this.reunioes = results;
+      vapp.hideSplash();
+     });
+    });
+   }
+  },
+  watch: {
+   porPagina: function (newPP, oldPP) {
+    //console.log('new = ' + newPP);
+    vapp.porPaginaR = newPP;
+   },
+   pagina: function (newPP, oldPP) {
+    //console.log('new = ' + newPP);
+    vapp.paginaR = newPP;
+   }
+  }
+ });
+</script>

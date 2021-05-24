@@ -58,7 +58,8 @@ html{
  margin-left: 80px; /* Same as the width of the sidenav */
  padding: 10px;
  margin-top: 50px;
- height: 100vh;
+ /*height: 100vh;*/
+ min-height: 150vh;
  width: calc(100% - 80px);
  overflow-y: auto;
  padding-bottom: 200px;

@@ -1,0 +1,179 @@
+/*.item-lista-menu{
+ display: block; 
+ white-space: nowrap; 
+ margin-left: 0px !important; 
+ padding-left: 10px !important;
+}
+.item-lista-menu:hover{
+ float: initial; 
+ left:0; 
+ padding-left: 10px !important;
+}
+
+.item-lista-menu-accordion{
+ display: block; 
+ white-space: nowrap; 
+ padding: 0px !important;
+}
+.item-lista-menu-accordion .q-expansion-item__container:hover{
+ background-color: #F00;
+}
+.item-lista-menu-accordion .q-expansion-item__container:hover .q-item__section--avatar{
+ background-color: #00F;
+ margin-top: -5px !important;
+ margin-left: 5px !important;
+}*/
+
+*{
+
+}
+
+.q-drawer .q-expansion-item .q-item__section .q-avatar{
+ margin-left: -15px !important; 
+}
+
+/*
+deixo os 'cantos' dos elementos
+*/
+*{
+ border-radius: 0 !important;
+}
+
+/*
+posso adicionar cor customizada
+isso só funciona se não houver cor indicada no componente
+*/
+.sidebar-background{
+ /*  background: rgba(10, 10, 10, 0.46) !important;*/
+}
+
+/*
+padding personalizado para colunas (grid)
+*/
+[class^="col"]{
+ padding: 5px;
+}
+
+/*
+ajuste no fieldset 
+*/
+fieldset {
+ border: solid 2px;
+ border-radius: 5px;
+}
+fieldset legend{
+ border: solid 2px;
+ border-radius: 5px;
+ background: inherit;
+ padding: 2px;
+ padding-left: 5px;
+ padding-right: 5px;
+}
+
+/*
+ajustes do z-index para corrigir o menu lateral
+*/
+.q-drawer, .q-header {
+ /* background:#666666 !important*/
+}
+.q-drawer-container {
+ /* color: #ffffff;*/
+ z-index: 9049;
+ position: fixed;
+ height: 100vh !important;
+}
+.q-drawer{
+ width: 70px !important;
+ transition: 0.15s;
+}
+.q-drawer:hover{
+ width: 300px !important;
+}
+/*ajustes para não quebrar linha no item do menu lateral*/
+.q-drawer .q-list .q-expansion-item{
+ white-space: nowrap;
+}
+.q-drawer .q-expansion-item__content .q-card__section{
+ /* display: block; */
+ white-space: normal;
+}
+/*
+o padding do menu pode ser ajustado pelas propriedades
+header-inset-level
+e 
+content-inset-level
+*/
+/*ajusta o avatar do menu lateral - baseado em material icon*/
+.q-drawer .q-expansion-item__container .q-item__section--avatar *{
+ text-align: center !important;
+ padding-left: 7px;
+}
+.q-header{
+ z-index: 9050;
+}
+.q-page-container {
+ z-index: 9051;
+ padding-left:70px!important;
+}
+.q-menu.q-position-engine{
+ z-index: 100 !important;
+}
+@media(min-width:640px){
+ .q-toolbar{
+  /*  padding-left: 0!important;*/
+ }
+}
+@media(max-width:640px){
+ .q-drawer{
+  width: 250px !important;
+  top: 0px;
+  z-index: 9052;
+ }
+ .q-drawer:hover{
+  width: 250px !important;
+ }
+ .q-header{
+  z-index: 90;
+ }
+ .q-page-container{
+  padding-left: 0px !important;
+ }
+}
+
+/*
+ajusta o modal/dialog para aparecer por cima de todos
+*/
+.q-dialog--modal{
+ z-index: 10000 !important;
+}
+
+
+/*
+ajuste no botão para não ficar com maiúsculas - que é padrão material design
+*/
+.q-btn{
+ text-transform: none;
+}
+
+/*
+ajustes para cor de tabela
+com linha e hover
+*/
+.q-table tbody td:before {
+ background: rgba(0, 0, 0, 0.2);
+}
+.body--dark .q-table tbody td:before {
+ background: rgba(255, 255, 255, 0.2);
+}
+.body--dark .q-table--bordered {
+ border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.q-table--horizontal-separator th, .q-table--horizontal-separator td
+{
+ border-bottom-width: 1px !important;
+}
+.body--dark .q-table--horizontal-separator th, .body--dark .q-table--horizontal-separator td
+{
+ border-bottom-width: 1px !important;
+ border-color: rgba(255, 255, 255, 0.12);
+}

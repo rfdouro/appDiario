@@ -1,0 +1,518 @@
+<style>
+ .popup-cadastro .page-content{
+  padding: 50px !important;
+  /*left: -25px;*/
+ }
+ .popup-cadastro .toolbar-bottom{
+  padding-top: 10px !important;
+ }
+ @media(min-width:768px){
+  .popup-cadastro{
+   width: 50% !important;
+   left: 25%;
+  }
+ }
+ .daySelected{
+  /*background-color: #00e676;*/
+  border-bottom: 3px solid var(--f7-theme-color);
+  padding-top: 5px;
+  padding-left: 2px;
+ }
+ .menu-item-dropdown{
+  /*  background-color: var(--f7-color-black);*/
+ }
+ .menu-dropdown-content{
+  /*  background-color: var(--f7-theme-color);*/
+ }
+</style>
+<div id="appTarefa" v-cloak>
+
+ <q-dialog v-model="mostraModal" persistent :maximized="false" transition-show="none" transition-hide="none">
+  <q-card style="width: 80%">
+   <q-bar>
+    <div class="text-h6">Tarefa</div>
+    <q-space ></q-space>
+    <q-btn dense flat icon="close" v-close-popup>
+     <q-tooltip content-class="bg-white text-primary">Fechar</q-tooltip>
+    </q-btn>
+   </q-bar>
+
+   <!--   <q-card-section>
+       <div class="text-h6">Tarefa</div>
+      </q-card-section>
+      <q-separator ></q-separator>-->
+   <q-card-section style="max-height: 60vh;" class="scroll">
+    <div class="row" style="width: auto">
+     <div class="col-12">
+      <q-input ref="datacad" @focus="$refs.datacad.select()" mask="##/##/####" placeholder="__/__/____" v-model='tarefa.dataL' label="Data da tarefa" />
+     </div>
+     <div class="col-12">
+      <q-input v-model='tarefa.descricao' label="Descrição da tarefa" />
+     </div>
+     <div class="col-12">
+      <q-select v-model='tarefa.prioridade' :options="prioridades"
+                option-value="prioridade"
+                option-label="texto"
+                emit-value
+                map-options
+                label="Prioridade" />
+     </div>
+    </div>
+   </q-card-section>
+
+   <q-separator ></q-separator>
+
+   <q-card-actions align="right">
+    <q-btn flat label="Cancelar" color="primary" v-close-popup @click='cancelar'></q-btn>
+    <q-btn flat label="Salvar" color="primary" v-close-popup @click='salvarTarefa'></q-btn>
+   </q-card-actions>
+  </q-card>
+ </q-dialog>
+
+ <!-- <div class="popup popup-cadastro">
+   <div class="page">
+    <div class="navbar">
+     <div class="navbar-bg"></div>
+     <div class="navbar-inner sliding">
+      <div class="right">
+       <a class="link back">
+        <i class="icon material-icons popup-close">close</i>
+       </a>
+      </div>
+      <div class="title">Tarefa</div>
+     </div>
+    </div>
+ 
+    <div class="page-content">
+     <div class="list no-hairlines-md">
+      <ul>
+       <li class="item-content item-input">
+        <div class="item-inner">
+         <div class="item-title item-label text-align-left">Data</div>
+         <div class="item-input-wrap">
+          <input type="text"  placeholder="" v-model='tarefa.dataL'  />
+         </div>
+        </div>
+       </li>
+       <li class="item-content item-input item-input-outline">
+        <div class="item-inner">
+         <div class="item-title item-label">Descrição</div>
+         <div class="item-input-wrap">
+          <input type="text" v-model='tarefa.descricao' placeholder="Descrição da tarefa" />
+          <span class="input-clear-button"></span>
+         </div>
+        </div>
+       </li>
+       <li class="item-content item-input">
+        <div class="item-inner">
+         <div class="item-title item-label text-align-left">Prioridade</div>
+         <div class="item-input-wrap">
+          <select v-model='tarefa.prioridade'>
+           <option v-for='p in prioridades' :value='p.prioridade'>{{p.texto}}</option>
+          </select>
+         </div>
+        </div>
+       </li>
+      </ul>
+     </div>
+    </div>
+ 
+    <div class="toolbar toolbar-bottom row padding">
+     <div class='col'></div>
+     <div class='col'></div>
+     <div class='col'><button class='button button-fill bg-color-blue' @click='salvarTarefa'>Salvar</button></div>
+     <div class='col'><button class='button button-fill bg-color-red' @click='cancelar'>Cancelar</button></div>
+    </div>
+ 
+   </div>
+  </div>-->
+
+
+ <div class="row" style='min-height: 100vh;'>
+  <div class="col-12 col-md-4 text-center">
+   <q-date v-model="dataAtual" mask="DD/MM/YYYY" class='text-justify' today-btn 
+           :events="datasTarefas"
+           :event-color="(date) => date[9] % 2 === 0 ? 'orange' : 'orange'"></q-date>
+   <br/>
+   <br/>
+   <q-btn color="primary" icon="calendar_today" label="Nova tarefa" @click='abreCadastro' ></q-btn>
+  </div>
+  <div class="col-12 col-md-8">
+   <table class="q-table q-table--horizontal-separator" style="width: 100%;">
+    <thead>
+     <tr>
+      <th colspan='3' class="text-center">
+       <div>
+        <h2>Tarefas a fazer</h2>
+        <!--        <select class="q-table q-btn " style="padding: 10px;">
+                 <option v-for="p in prioridades">{{p.texto}}</option>
+                </select>-->
+       </div>
+      </th>
+     </tr>
+     <tr>
+      <th style="width: 15%" >Lançamento</th>
+      <th >Descrição</th>
+      <th style="width: 15%" ></th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr v-for='t in tarefas' v-bind:class='classePrioridade(t.prioridade)'>
+      <td >{{t.dataL}}</td>
+      <td >{{t.descricao}}</td>
+      <td >
+    <q-btn-dropdown split class="glossy" color="blue-10" label="Ações">
+     <q-list>
+      <q-item clickable v-close-popup @click='visualizar(t)' dense>
+       <q-item-section>
+        <q-item-label>Alterar</q-item-label>
+       </q-item-section>
+       <q-item-section side>
+        <q-icon name="autorenew" color="amber" ></q-icon>
+       </q-item-section>
+      </q-item>
+
+      <q-item clickable v-close-popup @click='finalizar(t)' dense>
+       <q-item-section>
+        <q-item-label>Finalizar</q-item-label>
+       </q-item-section>
+       <q-item-section side>
+        <q-icon name="check" color="green" ></q-icon>
+       </q-item-section>
+      </q-item>
+
+      <q-separator inset spaced ></q-separator>
+
+      <q-item clickable v-close-popup @click='excluir(t)' dense>
+       <q-item-section>
+        <q-item-label>Excluir</q-item-label>
+       </q-item-section>
+       <q-item-section side>
+        <q-icon name="delete" color="red" ></q-icon>
+       </q-item-section>
+      </q-item>
+
+     </q-list>
+    </q-btn-dropdown>
+    </td>
+    </tr>
+    </tbody>
+   </table>
+  </div>
+ </div>
+
+
+</div>
+
+<script>
+
+ var vappTarefa = new Vue({
+  el: '#appTarefa',
+  data: {
+   mostraModal: false,
+   locale: 'pt-BR',
+   labels: {
+    'pt-BR': {
+     labelPrevDecade: "Década anterior",
+     labelPrevYear: "Ano anterior",
+     labelPrevMonth: "Mês anterior",
+     labelCurrentMonth: "Mês corrente",
+     labelNextMonth: "Próximo mês",
+     labelNextYear: "Próximo ano",
+     labelNextDecade: "Próxima década",
+     labelToday: "Hoje",
+     labelSelected: "Data selecionada",
+     labelNoDateSelected: "Sem data selecionada",
+     labelCalendar: "Calendário",
+     labelNav: "Navegação",
+     labelHelp: "Use o teclado para navegar entre datas"
+    }
+   },
+   ptLocale: {
+    /* starting with Sunday */
+    days: 'Domingo_Segunda_Terça_Quarta_Quinta_Sexta_Sábado'.split('_'),
+    daysShort: 'Dom_Seg_Ter_Qua_Qui_Sex_Sáb'.split('_'),
+    months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
+    monthsShort: 'Jan_Fev_Mar_Abr_Mai_Jun_Jul_Ago_Set_Out_Nov_Dez'.split('_'),
+    firstDayOfWeek: 0
+   },
+   prioridades: [
+    {prioridade: 1, texto: 'Normal'}, {prioridade: 2, texto: 'Média'}, {prioridade: 3, texto: 'Alta'}
+   ],
+   tarefas: [],
+   todasTarefas: [],
+   //diasTarefasMes: [],
+   datasComTarefasClass: [],
+   datasTarefas: [],
+   tarefa: {
+    dataL: null,
+    dataA: null,
+    dataF: null,
+    descricao: '',
+    prioridade: ''
+   },
+   dataAtual: moment(new Date()).format("DD/MM/YYYY"), // Quasar.utils.date.formatDate(new Date(), 'DD/MM/YYYY'),
+   dataSel: '01/01/1900',
+   telaCadastro: null
+  },
+  created: function () {
+   var _this = this;
+   //_this.getDados();
+   //this.dataSel = this.dataFmt2(new Date());
+   //this.resetTarefa();
+  },
+  mounted: function () {
+   var _this = this;
+   _this.getDados();
+   this.dataSel = moment(new Date()).format("DD/MM/YYYY");
+   this.dataAtual = moment(new Date()).format("DD/MM/YYYY");
+   console.log(this.dataAtual);
+   console.log(moment(this.dataAtual, "DD/MM/YYYY"));
+   console.log(moment(this.dataAtual, "DD/MM/YYYY").toDate());
+   this.resetTarefa();
+   //_this.criaCalendar();
+   /*this.telaCadastro = vapp.appF7.popup.create({
+    el: '.popup-cadastro'
+    });*/
+  },
+  methods: {
+   resetTarefa: function () {
+    this.tarefa = {
+     dataL: moment(new Date()).format("DD/MM/YYYY"),
+     dataA: moment(new Date()).format("DD/MM/YYYY"),
+     dataF: null,
+     descricao: '',
+     prioridade: ''
+    };
+   },
+   classePrioridade: function (prioridade) {
+    //var variante = 'bg-color-white text-color-black';
+    var variante = 'text-primary';
+    switch (prioridade) {
+//     case 1:
+//      //variante = 'bg-color-white text-color-black';
+//      variante = 'text-color-black';
+//      break;
+     case 2:
+      //variante = 'bg-color-yellow text-color-black';
+      variante = 'text-orange';
+      break;
+     case 3:
+      variante = 'text-red';
+      break;
+    }
+    return variante;
+   },
+   variantePrioridade: function (prioridade) {
+    var variante = 'light';
+    switch (prioridade) {
+     case 1:
+      variante = 'default';
+      break;
+     case 2:
+      variante = 'warning';
+      break;
+     case 3:
+      variante = 'danger';
+      break;
+    }
+    return variante;
+   },
+   textoPrioridade: function (prioridade) {
+    var variante = 'black';
+    switch (prioridade) {
+     case 1:
+      variante = 'black';
+      break;
+     case 2:
+      variante = 'black';
+      break;
+     case 3:
+      variante = 'white';
+      break;
+    }
+    return variante;
+   },
+   estiloFinalizacao: function (eFinalizacao) {
+    if (eFinalizacao) {
+     //return 'bg-dark';
+     return '';
+    }
+    return '';
+   },
+   selecionaValor: function (obj){
+    console.log(obj);
+   },
+   visualizar: function (tarefa) {
+    var _this = this;
+    _this.tarefa = tarefa;
+    _this.mostraModal = true;  
+    this.$nextTick(() => {
+     console.log(this.$refs.datacad);
+     //this.$refs.datacad.focus();
+     //this.$refs.datacad.select();
+    });
+   },
+   finalizar: function (tarefa) {
+    var _this = this;
+
+    _this.$q.dialog({
+     title: 'Confirmação',
+     message: "Confirma a finalização?",
+     cancel: true,
+     persistent: true
+    }).onOk(() => {
+     _this.tarefa = tarefa;
+     _this.tarefa.dataF = _this.dataAtual;
+     db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    });
+   },
+   excluir: function (tarefa) {
+    var _this = this;
+
+    _this.$q.dialog({
+     title: 'Confirmação',
+     message: "Confirma a exclusão?",
+     //cancel: true,
+     persistent: true,
+     ok: {
+      color: 'negative'
+     },
+     cancel: {
+      color: 'amber'
+     }
+    }).onOk(() => {
+     _this.tarefa = tarefa;
+     db.Tarefa.delete(_this.tarefa.id).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    });
+   },
+   getDados: function () {
+    var _this = this;
+
+    var dataConsulta = _this.dataAtual;
+    vapp.showSplash();
+
+    db.Tarefa.orderBy('dataL')/*.reverse()*/
+            .filter(function (t) {
+             return t.dataF == null && moment(t.dataA, "DD/MM/YYYY").toDate() <= moment(_this.dataAtual, "DD/MM/YYYY").toDate();
+            }).toArray().then(function (results) {
+     _this.tarefas = results;
+
+     db.Tarefa.orderBy('dataL')
+             .filter(function (t) {
+              return t.dataF == null
+              //&&
+              //t.dataA <= _this.dataFmtIng(dataConsulta);
+              //_this.acertaData(t.dataA).getMonth() == _this.acertaData(_this.dataFmtIng(dataConsulta)).getMonth()
+             }).toArray().then(function (results) {
+      _this.todasTarefas = results;
+      _this.datasTarefas = [];
+      _this.todasTarefas.forEach(function (tarefa, i) {
+       /*var dt = _this.acertaData(tarefa.dataL);
+        var dm = {d: dt.getDate(), m: dt.getMonth(), y: dt.getFullYear()};
+        //_this.diasTarefasMes.push(dm);
+        var dtaux = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+        _this.datasTarefas.push(dtaux);*/
+
+       //_this.datasTarefas.push(moment(tarefa.dataL, "DD/MM/YYYY").toDate());
+       //_this.datasTarefas.push(moment(tarefa.dataL, "YYYY/MM/DD"));
+       _this.datasTarefas.push(moment(moment(tarefa.dataL, "DD/MM/YYYY").toDate()).format("YYYY/MM/DD"));
+       //_this.datasTarefas.push(tarefa.dataL);       
+      });
+
+      /*_this.$refs.calendario.calendarInline.params.rangesClasses = [
+       {
+       //cssClass: 'bg-color-blue text-color-black',
+       cssClass: 'daySelected',
+       range: _this.datasTarefas
+       }
+       ];
+       _this.$refs.calendario.calendarInline.update();*/
+      vapp.hideSplash();
+     });
+    });
+   },
+   abreCadastro: function () {
+    //this.telaCadastro.open(false);
+    this.mostraModal = true;
+    /*this.$nextTick(() => {
+     this.$refs.datacad.select();
+    });*/
+   },
+   cancelar: function () {
+    this.mostraModal = false;
+    this.resetTarefa();
+    //this.getDados();
+   },
+   salvarTarefa: function () {
+    var _this = this;
+
+    if (_this.tarefa.dataL == null) {
+     _this.$q.dialog({
+      message: 'Deve-se usar uma data de lançamento!',
+      cancel: false,
+      persistent: true
+     });
+     return;
+    }
+    _this.tarefa.dataA = _this.tarefa.dataL;
+    if (_this.tarefa.prioridade == null || _this.tarefa.prioridade == "") {
+     _this.$q.dialog({
+      message: 'Deve-se escolher uma prioridade!',
+      cancel: false,
+      persistent: true
+     });
+     return;
+    }
+
+
+    if (_this.tarefa.id == null) {
+     //_this.tarefa.dataA = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataA);
+     //_this.tarefa.dataL = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataL);
+     db.Tarefa.add(_this.tarefa).then(function (r) {
+      _this.mostraModal = false;
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    } else {
+     //_this.tarefa.dataA = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataA);
+     //_this.tarefa.dataL = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataL);
+     db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
+      _this.mostraModal = false;
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    }
+   },
+   alteraPrioridade: function (tarefa, prioridade) {
+    tarefa.prioridade = prioridade;
+    db.transaction('rw', [db.Tarefa], function () {
+     db.Tarefa.update(tarefa.id, tarefa).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'tarefas.html'});
+     });
+    });
+   },
+   filtra: function (e) {
+    //this.dataAtual = e.value;
+    console.log('filtra');
+    console.log(e.$vnode.data.model);
+    console.log(e.$vnode.data.model.value);
+    console.log(this.dataAtual);
+   }
+  },
+  watch: {
+   dataAtual: function (newData, oldData) {
+    var _this = this;
+    _this.getDados();
+   }
+  },
+  computed: {
+   dataM: function () {
+    //return this.dataFmt2(this.dataAtual);
+    return moment(this.dataAtual, "DD/MM/YYYY").toDate();
+   }
+  }
+ });
+</script>

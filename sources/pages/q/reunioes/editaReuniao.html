@@ -1,0 +1,195 @@
+<div id="appCadReuniao" v-cloak>
+ <h2>Reunião</h2>
+ <fieldset>
+  <div class="row list" style="margin: 0px;">
+   <div class="col-12 col-md-8">
+
+    <!--    <q-select v-model="reuniao.grupo" :options="grupos"
+                  option-label="nome"
+                  emit-value
+                  map-options
+                  ref='inptGrupo'
+                  label="Grupo de Reunião" ></q-select>-->
+
+    <!-- posso trocar o outlined pelo filled e vice versa -->
+    <q-field filled  label="Grupo de reunião" clearable stack-label @click="console.log('ok')" >
+     <template v-slot:control>
+      <select class='q-field__native q-placeholder' aria-label='Grupo de Reunião' v-model="reuniao.grupo"
+              style='background: transparent; width:100%; height:90%; border: none; left: 0; position: absolute; top:0; padding-top: 20px; margin-top: 3px; margin-bottom: 2px;'>
+       <option v-for="g in grupos" v-bind:value="{id: g.id, nome: g.nome, descricao: g.descricao}" >{{g.nome}}</option>
+      </select>
+     </template>
+    </q-field>
+
+
+   </div>
+   <div class="col-12 col-md-4">
+
+    <q-input filled v-model="reuniao.data"  type="date" label="Data"></q-input>
+
+    <!--    <q-input filled v-model="reuniao.data" readonly label="Data">
+         <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+           <q-popup-proxy ref="qDateProxy" transition-show="none" transition-hide="scale">
+            <q-date v-model="reuniao.data" mask="DD/MM/YYYY">
+             <div class="row items-center justify-end">
+              <q-btn v-close-popup label="Fechar" color="primary" flat ></q-btn>
+             </div>
+            </q-date>
+           </q-popup-proxy>
+          </q-icon>
+         </template>
+        </q-input>-->
+
+   </div>
+  </div>
+  <div class="row list" style="margin: 0px;">
+   <div class="col-12">
+
+    <q-input
+     ref='inptAta'
+     v-model='reuniao.ata'
+     filled
+     type="textarea"
+     label='Ata da reunião'
+     ></q-input>
+
+   </div>
+  </div>
+ </fieldset>
+ <div class="row list">
+  <div class="col-0 col-md-6">
+
+  </div>
+  <div class="col-12 col-md-6">
+   <div class="row">
+    <q-btn color="primary" class="col-4" label="Salvar" @click="salvaDados"></q-btn>
+    <q-btn color="negative" class="col-4" label="Excluir" @click="excluiDado"></q-btn>
+    <q-btn class="col-4" label="Cancelar" @click="vapp.navega({div:'conteudo', pagina:'pages/q/reunioes/listaReunioes.html'})"></q-btn>
+   </div>
+  </div>
+ </div>
+
+</div>
+
+
+<script>
+ var vappCadReuniao = new Vue({
+  el: '#appCadReuniao',
+  data: {
+   reuniao: {
+    id: -1,
+    data: moment(new Date()).format("DD/MM/YYYY"),
+    ata: '',
+    grupo: null
+   },
+   grupos: [],
+   reunioes: [],
+   locale: 'pt-BR',
+   labels: {
+    'pt-BR': {
+     labelPrevDecade: "Década anterior",
+     labelPrevYear: "Ano anterior",
+     labelPrevMonth: "Mês anterior",
+     labelCurrentMonth: "Mês corrente",
+     labelNextMonth: "Próximo mês",
+     labelNextYear: "Próximo ano",
+     labelNextDecade: "Próxima década",
+     labelToday: "Hoje",
+     labelSelected: "Data selecionada",
+     labelNoDateSelected: "Sem data selecionada",
+     labelCalendar: "Calendário",
+     labelNav: "Navegação",
+     labelHelp: "Use o teclado para navegar entre datas"
+    }
+   }
+  },
+  mounted: function () {
+   var _this = this;
+   this.reuniao.id = vapp.urlParam('id');
+   _this.getDados();
+  },
+  methods: {
+   acertaData: function (dtAnoMesDia) {
+    var dtspl = dtAnoMesDia.split('-');
+    var ano = dtspl[0];
+    var mes = dtspl[1];
+    var dia = dtspl[2];
+    return new Date(mes + "-" + dia + "-" + ano);
+   },
+   getDados: function () {
+    var _this = this;
+    //console.log(_this.reuniao.id);
+    db.Reuniao.where('id').equals(_this.reuniao.id).toArray().then(function (r) {
+     //console.log(r);
+     _this.reuniao = r[0];
+     //moment(dtR).format('DD/MM/YYYY')
+     console.log(new Date(moment(_this.reuniao.data).format('MM/DD/YYYY')));
+     _this.reuniao.data = moment(_this.reuniao.data).format('YYYY-MM-DD');
+     console.log(_this.reuniao);
+     db.GrupoReuniao.orderBy('nome').toArray().then(function (results) {
+      _this.grupos = results;
+     });
+    });
+   },
+   resetReuniao: function () {
+    this.reuniao = {
+     data: null,
+     ata: '',
+     grupo: null
+    };
+   },
+   salvaDados: function () {
+    var _this = this;
+    if (_this.reuniao.grupo == null || _this.reuniao.grupo.ata == "") {
+     _this.$q.dialog({
+      title: 'Atenção',
+      message: 'Digite os dados corretamente',
+      cancel: false,
+      persistent: true
+     });
+     return;
+    }
+
+    //_this.reuniao.data = moment(_this.reuniao.data, "DD/MM/YYYY").toDate();
+    _this.reuniao.data = moment(_this.reuniao.data, "YYYY-MM-DD").toDate();
+
+    db.Reuniao.update(_this.reuniao.id, _this.reuniao).then(function () {
+     _this.$q.dialog({
+      title: 'Informação',
+      message: 'Alteração efetuada',
+      cancel: true,
+      persistent: true
+     }).onOk(() => {
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/reunioes/listaReunioes.html'});
+     });
+    }).catch(function () {
+
+    });
+   },
+   excluiDado: function () {
+    var _this = this;
+
+    _this.$q.dialog({
+     title: 'Confirmação',
+     message: 'Confirma a exclusão?',
+     cancel: true,
+     persistent: true
+    }).onOk(() => {
+     db.Reuniao.delete(_this.reuniao.id).then(function (r) {
+      _this.$q.dialog({
+       title: 'Informação',
+       message: 'Exclusão efetuada',
+       cancel: false,
+       persistent: true
+      }).onOk(() => {
+       vapp.navega({div: 'conteudo', pagina: 'pages/q/reunioes/listaReunioes.html'});
+      });
+     });
+    });
+
+    return;
+   }
+  }
+ });
+</script>

@@ -1,0 +1,374 @@
+<div id="appTarefa" v-cloak>
+ <div class="row" style='min-height: 100vh;'>
+  <div class="col-12">
+   <table class="q-table q-table--horizontal-separator" style="width: 100%;">
+    <thead>
+     <tr>
+      <th colspan='3' class="text-center">
+       <div>
+        <h2>Tarefas finalizadas</h2>
+       </div>
+      </th>
+     </tr>
+     <tr>
+      <th style="width: 15%; cursor: pointer" @click="reordenar">
+       Lançamento
+       &nbsp;
+    <q-icon name="arrow_drop_down" style="color: #000; font-size: 1.4em;" v-show="ordemDataAsc"></q-icon>
+    <q-icon name="arrow_drop_up" style="color: #000; font-size: 1.4em;" v-show="!ordemDataAsc"></q-icon>
+    </th>
+    <th >Descrição</th>
+    <th style="width: 15%" ></th>
+    </tr>
+    </thead>
+    <tbody>
+     <tr v-for='t in tarefas' v-bind:class='classePrioridade(t.prioridade)'>
+      <td >{{t.dataL}}</td>
+      <td >{{t.descricao}}</td>
+      <td >
+    <q-btn-dropdown split class="glossy" color="blue-10" label="Ações">
+     <q-list>
+
+      <q-item clickable v-close-popup @click='reabrir(t)' dense>
+       <q-item-section>
+        <q-item-label>Reabrir</q-item-label>
+       </q-item-section>
+       <q-item-section side>
+        <q-icon name="check" color="green" ></q-icon>
+       </q-item-section>
+      </q-item>
+
+      <q-separator inset spaced ></q-separator>
+
+      <q-item clickable v-close-popup @click='excluir(t)' dense>
+       <q-item-section>
+        <q-item-label>Excluir</q-item-label>
+       </q-item-section>
+       <q-item-section side>
+        <q-icon name="delete" color="red" ></q-icon>
+       </q-item-section>
+      </q-item>
+
+     </q-list>
+    </q-btn-dropdown>
+    </td>
+    </tr>
+    </tbody>
+   </table>
+  </div>
+ </div>
+
+
+</div>
+
+<script>
+
+ var vappTarefa = new Vue({
+  el: '#appTarefa',
+  data: {
+   mostraModal: false,
+   locale: 'pt-BR',
+   labels: {
+    'pt-BR': {
+     labelPrevDecade: "Década anterior",
+     labelPrevYear: "Ano anterior",
+     labelPrevMonth: "Mês anterior",
+     labelCurrentMonth: "Mês corrente",
+     labelNextMonth: "Próximo mês",
+     labelNextYear: "Próximo ano",
+     labelNextDecade: "Próxima década",
+     labelToday: "Hoje",
+     labelSelected: "Data selecionada",
+     labelNoDateSelected: "Sem data selecionada",
+     labelCalendar: "Calendário",
+     labelNav: "Navegação",
+     labelHelp: "Use o teclado para navegar entre datas"
+    }
+   },
+   ptLocale: {
+    /* starting with Sunday */
+    days: 'Domingo_Segunda_Terça_Quarta_Quinta_Sexta_Sábado'.split('_'),
+    daysShort: 'Dom_Seg_Ter_Qua_Qui_Sex_Sáb'.split('_'),
+    months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
+    monthsShort: 'Jan_Fev_Mar_Abr_Mai_Jun_Jul_Ago_Set_Out_Nov_Dez'.split('_'),
+    firstDayOfWeek: 0
+   },
+   prioridades: [
+    {prioridade: 1, texto: 'Normal'}, {prioridade: 2, texto: 'Média'}, {prioridade: 3, texto: 'Alta'}
+   ],
+   tarefas: [],
+   todasTarefas: [],
+   //diasTarefasMes: [],
+   datasComTarefasClass: [],
+   datasTarefas: [],
+   tarefa: {
+    dataL: null,
+    dataA: null,
+    dataF: null,
+    descricao: '',
+    prioridade: ''
+   },
+   dataAtual: moment(new Date()).format("DD/MM/YYYY"), // Quasar.utils.date.formatDate(new Date(), 'DD/MM/YYYY'),
+   dataSel: '01/01/1900',
+   telaCadastro: null,
+   ordemDataAsc: true
+  },
+  created: function () {
+   var _this = this;
+   //_this.getDados();
+   //this.dataSel = this.dataFmt2(new Date());
+   //this.resetTarefa();
+  },
+  mounted: function () {
+   var _this = this;
+   _this.getDados();
+   this.dataSel = moment(new Date()).format("DD/MM/YYYY");
+   this.dataAtual = moment(new Date()).format("DD/MM/YYYY");
+   console.log(this.dataAtual);
+   console.log(moment(this.dataAtual, "DD/MM/YYYY"));
+   console.log(moment(this.dataAtual, "DD/MM/YYYY").toDate());
+   this.resetTarefa();
+   //_this.criaCalendar();
+   /*this.telaCadastro = vapp.appF7.popup.create({
+    el: '.popup-cadastro'
+    });*/
+  },
+  methods: {
+   resetTarefa: function () {
+    this.tarefa = {
+     dataL: moment(new Date()).format("DD/MM/YYYY"),
+     dataA: moment(new Date()).format("DD/MM/YYYY"),
+     dataF: null,
+     descricao: '',
+     prioridade: ''
+    };
+   },
+   classePrioridade: function (prioridade) {
+    //var variante = 'bg-color-white text-color-black';
+    var variante = 'text-primary';
+    switch (prioridade) {
+//     case 1:
+//      //variante = 'bg-color-white text-color-black';
+//      variante = 'text-color-black';
+//      break;
+     case 2:
+      //variante = 'bg-color-yellow text-color-black';
+      variante = 'text-orange';
+      break;
+     case 3:
+      variante = 'text-red';
+      break;
+    }
+    return variante;
+   },
+   variantePrioridade: function (prioridade) {
+    var variante = 'light';
+    switch (prioridade) {
+     case 1:
+      variante = 'default';
+      break;
+     case 2:
+      variante = 'warning';
+      break;
+     case 3:
+      variante = 'danger';
+      break;
+    }
+    return variante;
+   },
+   textoPrioridade: function (prioridade) {
+    var variante = 'black';
+    switch (prioridade) {
+     case 1:
+      variante = 'black';
+      break;
+     case 2:
+      variante = 'black';
+      break;
+     case 3:
+      variante = 'white';
+      break;
+    }
+    return variante;
+   },
+   estiloFinalizacao: function (eFinalizacao) {
+    if (eFinalizacao) {
+     //return 'bg-dark';
+     return '';
+    }
+    return '';
+   },
+   selecionaValor: function (obj) {
+    console.log(obj);
+   },
+   visualizar: function (tarefa) {
+    var _this = this;
+    _this.tarefa = tarefa;
+    _this.mostraModal = true;
+    this.$nextTick(() => {
+     console.log(this.$refs.datacad);
+     //this.$refs.datacad.focus();
+     //this.$refs.datacad.select();
+    });
+   },
+   finalizar: function (tarefa) {
+    var _this = this;
+
+    _this.$q.dialog({
+     title: 'Confirmação',
+     message: "Confirma a finalização?",
+     cancel: true,
+     persistent: true
+    }).onOk(() => {
+     _this.tarefa = tarefa;
+     _this.tarefa.dataF = _this.dataAtual;
+     db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    });
+   },
+   reabrir: function (tarefa) {
+    var _this = this;
+
+    _this.$q.dialog({
+     title: 'Confirmação',
+     message: "Confirma a reabertura?",
+     cancel: true,
+     persistent: true
+    }).onOk(() => {
+     _this.tarefa = tarefa;
+     _this.tarefa.dataF = null;
+     db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas_finalizadas.html'});
+     });
+    });
+   },
+   excluir: function (tarefa) {
+    var _this = this;
+
+    _this.$q.dialog({
+     title: 'Confirmação',
+     message: "Confirma a exclusão?",
+     //cancel: true,
+     persistent: true,
+     ok: {
+      color: 'negative'
+     },
+     cancel: {
+      color: 'amber'
+     }
+    }).onOk(() => {
+     _this.tarefa = tarefa;
+     db.Tarefa.delete(_this.tarefa.id).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    });
+   },
+   reordenar: function () {
+    this.ordemDataAsc = !this.ordemDataAsc;
+    this.getDados();
+   },
+   getDados: function () {
+    var _this = this;
+
+    var dataConsulta = _this.dataAtual;
+    vapp.showSplash();
+
+    if (this.ordemDataAsc) {
+     db.Tarefa.orderBy('dataL')
+             .filter(function (t) {
+              return t.dataF != null;
+             }).toArray().then(function (results) {
+      _this.tarefas = results;
+      vapp.hideSplash();
+     });
+    } else {
+     db.Tarefa.orderBy('dataL').reverse()
+             .filter(function (t) {
+              return t.dataF != null;
+             }).toArray().then(function (results) {
+      _this.tarefas = results;
+      vapp.hideSplash();
+     });
+    }
+   },
+   abreCadastro: function () {
+    //this.telaCadastro.open(false);
+    this.mostraModal = true;
+    /*this.$nextTick(() => {
+     this.$refs.datacad.select();
+     });*/
+   },
+   cancelar: function () {
+    this.mostraModal = false;
+    this.resetTarefa();
+    //this.getDados();
+   },
+   salvarTarefa: function () {
+    var _this = this;
+
+    if (_this.tarefa.dataL == null) {
+     _this.$q.dialog({
+      message: 'Deve-se usar uma data de lançamento!',
+      cancel: false,
+      persistent: true
+     });
+     return;
+    }
+    _this.tarefa.dataA = _this.tarefa.dataL;
+    if (_this.tarefa.prioridade == null || _this.tarefa.prioridade == "") {
+     _this.$q.dialog({
+      message: 'Deve-se escolher uma prioridade!',
+      cancel: false,
+      persistent: true
+     });
+     return;
+    }
+
+
+    if (_this.tarefa.id == null) {
+     //_this.tarefa.dataA = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataA);
+     //_this.tarefa.dataL = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataL);
+     db.Tarefa.add(_this.tarefa).then(function (r) {
+      _this.mostraModal = false;
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    } else {
+     //_this.tarefa.dataA = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataA);
+     //_this.tarefa.dataL = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataL);
+     db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
+      _this.mostraModal = false;
+      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
+     });
+    }
+   },
+   alteraPrioridade: function (tarefa, prioridade) {
+    tarefa.prioridade = prioridade;
+    db.transaction('rw', [db.Tarefa], function () {
+     db.Tarefa.update(tarefa.id, tarefa).then(function (r) {
+      vapp.navega({div: 'conteudo', pagina: 'tarefas.html'});
+     });
+    });
+   },
+   filtra: function (e) {
+    //this.dataAtual = e.value;
+    console.log('filtra');
+    console.log(e.$vnode.data.model);
+    console.log(e.$vnode.data.model.value);
+    console.log(this.dataAtual);
+   }
+  },
+  watch: {
+   dataAtual: function (newData, oldData) {
+    var _this = this;
+    _this.getDados();
+   }
+  },
+  computed: {
+   dataM: function () {
+    //return this.dataFmt2(this.dataAtual);
+    return moment(this.dataAtual, "DD/MM/YYYY").toDate();
+   }
+  }
+ });
+</script>
