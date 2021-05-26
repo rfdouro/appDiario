@@ -364,6 +364,7 @@
     }).onOk(() => {
      _this.tarefa = tarefa;
      _this.tarefa.dataF = _this.dataAtual;
+     _this.tarefa.dataFDate = moment(_this.tarefa.dataF, "DD/MM/YYYY").toDate();
      db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
       vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
      });
@@ -443,6 +444,9 @@
      return;
     }
 
+
+    _this.tarefa.dataLDate = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();
+    _this.tarefa.dataADate = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();
 
     if (_this.tarefa.id == null) {
      db.Tarefa.add(_this.tarefa).then(function (r) {

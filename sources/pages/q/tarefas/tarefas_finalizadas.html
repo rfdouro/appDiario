@@ -211,22 +211,6 @@
      //this.$refs.datacad.select();
     });
    },
-   finalizar: function (tarefa) {
-    var _this = this;
-
-    _this.$q.dialog({
-     title: 'Confirmação',
-     message: "Confirma a finalização?",
-     cancel: true,
-     persistent: true
-    }).onOk(() => {
-     _this.tarefa = tarefa;
-     _this.tarefa.dataF = _this.dataAtual;
-     db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
-      vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
-     });
-    });
-   },
    reabrir: function (tarefa) {
     var _this = this;
 
