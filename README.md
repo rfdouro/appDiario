@@ -27,3 +27,7 @@ npm run start
 npm run make
 
 -> verifique o diretório "out"
+
+* Se houver o npx instalado pode-se compilar da usando o electron-packager indicando a plataforma
+
+npx electron-packager . appDiario --platform=win32 --arch=x64

@@ -10,10 +10,10 @@
 
 var dbName = "dbDiarioReunioes";
 
-try{
+try {
  //Dexie.delete(dbName);//CUIDADO:usado para excluir a base de dados
-}catch(e){
- 
+} catch (e) {
+
 }
 
 var db = new Dexie(dbName);
@@ -50,6 +50,28 @@ db.version(2).stores({
  //quando houver data de finalização indica que foi finalizada
  //dataA e dataF são controladas pela aplicação
  Tarefa: "$$id,dataL,dataA,dataF,descricao,prioridade"
+});
+
+//adicionadas as colunas dataLDate,dataADate,dataFDate (Date) na tabela Tarefa para organizar a ordenação
+//uso o moment para ajudar
+db.version(3).stores({
+ GrupoReuniao: "$$id,nome,descricao",
+ Reuniao: "$$id,data,ata,grupo",
+ DemColuna: "$$id,ordem,titulo,descricao,finalizacao,demandas",
+ Demanda: "$$id,dataI,dataF,titulo,descricao,coluna,prereqs,prioridade",
+ Tarefa: "$$id,dataL,dataA,dataF,descricao,prioridade,dataLDate,dataADate,dataFDate"
+}).upgrade(function (trans) {
+ return trans.Tarefa.toCollection().modify(function (tarefa) {
+  try {
+   tarefa.dataLDate = moment(tarefa.dataL, "DD/MM/YYYY").toDate();
+  } catch (e) {  }
+  try {
+   tarefa.dataADate = moment(tarefa.dataA, "DD/MM/YYYY").toDate();
+  } catch (e) {  }
+  try {
+   tarefa.dataFDate = moment(tarefa.dataF, "DD/MM/YYYY").toDate();
+  } catch (e) {  }
+ });
 });
 
 /**

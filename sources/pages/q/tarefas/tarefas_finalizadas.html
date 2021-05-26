@@ -275,7 +275,7 @@
     vapp.showSplash();
 
     if (this.ordemDataAsc) {
-     db.Tarefa.orderBy('dataL')
+     db.Tarefa.orderBy('dataLDate')
              .filter(function (t) {
               return t.dataF != null;
              }).toArray().then(function (results) {
@@ -283,7 +283,7 @@
       vapp.hideSplash();
      });
     } else {
-     db.Tarefa.orderBy('dataL').reverse()
+     db.Tarefa.orderBy('dataLDate').reverse()
              .filter(function (t) {
               return t.dataF != null;
              }).toArray().then(function (results) {

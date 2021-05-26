@@ -340,13 +340,13 @@
     }
     return '';
    },
-   selecionaValor: function (obj){
+   selecionaValor: function (obj) {
     console.log(obj);
    },
    visualizar: function (tarefa) {
     var _this = this;
     _this.tarefa = tarefa;
-    _this.mostraModal = true;  
+    _this.mostraModal = true;
     this.$nextTick(() => {
      console.log(this.$refs.datacad);
      //this.$refs.datacad.focus();
@@ -396,57 +396,31 @@
     var dataConsulta = _this.dataAtual;
     vapp.showSplash();
 
-    db.Tarefa.orderBy('dataL')/*.reverse()*/
+    db.Tarefa.orderBy('dataLDate')/*.reverse()*/
             .filter(function (t) {
              return t.dataF == null && moment(t.dataA, "DD/MM/YYYY").toDate() <= moment(_this.dataAtual, "DD/MM/YYYY").toDate();
             }).toArray().then(function (results) {
      _this.tarefas = results;
 
-     db.Tarefa.orderBy('dataL')
+     db.Tarefa
              .filter(function (t) {
               return t.dataF == null
-              //&&
-              //t.dataA <= _this.dataFmtIng(dataConsulta);
-              //_this.acertaData(t.dataA).getMonth() == _this.acertaData(_this.dataFmtIng(dataConsulta)).getMonth()
              }).toArray().then(function (results) {
       _this.todasTarefas = results;
       _this.datasTarefas = [];
       _this.todasTarefas.forEach(function (tarefa, i) {
-       /*var dt = _this.acertaData(tarefa.dataL);
-        var dm = {d: dt.getDate(), m: dt.getMonth(), y: dt.getFullYear()};
-        //_this.diasTarefasMes.push(dm);
-        var dtaux = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-        _this.datasTarefas.push(dtaux);*/
-
-       //_this.datasTarefas.push(moment(tarefa.dataL, "DD/MM/YYYY").toDate());
-       //_this.datasTarefas.push(moment(tarefa.dataL, "YYYY/MM/DD"));
        _this.datasTarefas.push(moment(moment(tarefa.dataL, "DD/MM/YYYY").toDate()).format("YYYY/MM/DD"));
-       //_this.datasTarefas.push(tarefa.dataL);       
       });
-
-      /*_this.$refs.calendario.calendarInline.params.rangesClasses = [
-       {
-       //cssClass: 'bg-color-blue text-color-black',
-       cssClass: 'daySelected',
-       range: _this.datasTarefas
-       }
-       ];
-       _this.$refs.calendario.calendarInline.update();*/
       vapp.hideSplash();
      });
     });
    },
    abreCadastro: function () {
-    //this.telaCadastro.open(false);
     this.mostraModal = true;
-    /*this.$nextTick(() => {
-     this.$refs.datacad.select();
-    });*/
    },
    cancelar: function () {
     this.mostraModal = false;
     this.resetTarefa();
-    //this.getDados();
    },
    salvarTarefa: function () {
     var _this = this;
@@ -471,15 +445,11 @@
 
 
     if (_this.tarefa.id == null) {
-     //_this.tarefa.dataA = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataA);
-     //_this.tarefa.dataL = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataL);
      db.Tarefa.add(_this.tarefa).then(function (r) {
       _this.mostraModal = false;
       vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
      });
     } else {
-     //_this.tarefa.dataA = moment(_this.tarefa.dataA, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataA);
-     //_this.tarefa.dataL = moment(_this.tarefa.dataL, "DD/MM/YYYY").toDate();//new Date(_this.tarefa.dataL);
      db.Tarefa.update(_this.tarefa.id, _this.tarefa).then(function (r) {
       _this.mostraModal = false;
       vapp.navega({div: 'conteudo', pagina: 'pages/q/tarefas/tarefas.html'});
@@ -495,7 +465,6 @@
     });
    },
    filtra: function (e) {
-    //this.dataAtual = e.value;
     console.log('filtra');
     console.log(e.$vnode.data.model);
     console.log(e.$vnode.data.model.value);
@@ -510,7 +479,6 @@
   },
   computed: {
    dataM: function () {
-    //return this.dataFmt2(this.dataAtual);
     return moment(this.dataAtual, "DD/MM/YYYY").toDate();
    }
   }
